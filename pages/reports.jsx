@@ -5,7 +5,7 @@ export default function Home() {
   const { setPageTitle } = useLayout();
 
   React.useEffect(() => {
-    setPageTitle("Dashboard");
+    setPageTitle("Reports");
   }, [setPageTitle]);
 
   return (

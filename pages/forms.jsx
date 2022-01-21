@@ -1,11 +1,13 @@
 import React from "react";
+import Head from "next/head";
+import Image from "next/image";
 import { useLayout } from "@context/layout";
 
 export default function Home() {
   const { setPageTitle } = useLayout();
 
   React.useEffect(() => {
-    setPageTitle("Dashboard");
+    setPageTitle("Forms");
   }, [setPageTitle]);
 
   return (
