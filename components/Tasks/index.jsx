@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classNames from "classnames";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import {
   CalendarIcon,
@@ -19,14 +20,6 @@ const taskStatus = {
   requested: {
     name: "Requested",
     items: tasks,
-  },
-  toDo: {
-    name: "To do",
-    items: [],
-  },
-  inProgress: {
-    name: "In Progress",
-    items: [],
   },
   done: {
     name: "Done",
@@ -74,10 +67,17 @@ const onDragEnd = (result, columns, setColumns) => {
 function Tasks(props) {
   const [columns, setColumns] = React.useState(taskStatus);
 
-  const ListItem = ({ innerRef, elIsDragging, children, ...props }) => {
+  const ListItem = ({ innerRef, isDragging, children, ...props }) => {
+    console.log("isDragging", isDragging);
     return (
       <li ref={innerRef} {...props} className="mb-4 min-h-8 select-none">
-        <a href="#" className="block hover:bg-gray-50">
+        <a
+          href="#"
+          className={classNames(
+            isDragging ? "bg-gray-100" : "",
+            "block bg-gray-50 hover:bg-gray-100 cursor-grab"
+          )}
+        >
           <div className="px-4 py-4 sm:px-6">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-indigo-600 truncate">
@@ -124,61 +124,63 @@ function Tasks(props) {
   };
 
   return (
-    <div className="flex ">
+    <div className="flex relative space-y-4 xl:space-y-0 xl:space-x-4">
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
       >
         {Object.entries(columns).map(([columnId, column], index) => {
           return (
-            <div className="flex flex-col items-center" key={columnId}>
+            <div
+              className="flex flex-col items-center flex-1 h-full"
+              key={columnId}
+            >
               <h2>{column.name}</h2>
-              <div className="m-2">
-                <Droppable droppableId={columnId} key={columnId}>
-                  {(provided, snapshot) => {
-                    return (
-                      <ul
-                        role="list"
-                        className="divide-y divide-gray-200 p-2 flex-1"
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        style={{
-                          background: snapshot.elSver
-                            ? "lightblue"
-                            : "lightgrey",
-                          minHeight: 500,
-                        }}
-                      >
-                        {column.items.map((item, index) => {
-                          return (
-                            <Draggable
-                              key={item.id}
-                              draggableId={item.id}
-                              index={index}
-                            >
-                              {(provided, snapshot) => {
-                                return (
-                                  <ListItem
-                                    innerRef={provided.innerRef}
-                                    elIsDragging={provided.isDragging}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={{
-                                      ...provided.draggableProps.style,
-                                    }}
-                                  >
-                                    {item.content}
-                                  </ListItem>
-                                );
-                              }}
-                            </Draggable>
-                          );
-                        })}
-                        {provided.placeholder}
-                      </ul>
-                    );
-                  }}
-                </Droppable>
-              </div>
+
+              <Droppable droppableId={columnId} key={columnId}>
+                {(provided, snapshot) => {
+                  return (
+                    <ul
+                      role="list"
+                      className={classNames(
+                        snapshot.isDraggingOver
+                          ? "bg-slate-200"
+                          : "bg-slate-100",
+                        "divide-y divide-gray-200 p-2 flex-1 w-full min-h-[500px]"
+                      )}
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {column.items.map((item, index) => {
+                        return (
+                          <Draggable
+                            key={item.id}
+                            draggableId={item.id}
+                            index={index}
+                          >
+                            {(provided, snapshot) => {
+                              console.log("provided: ", provided);
+                              return (
+                                <ListItem
+                                  innerRef={provided.innerRef}
+                                  isDragging={snapshot.isDragging}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  style={{
+                                    ...provided.draggableProps.style,
+                                  }}
+                                >
+                                  {item.content}
+                                </ListItem>
+                              );
+                            }}
+                          </Draggable>
+                        );
+                      })}
+                      {provided.placeholder}
+                    </ul>
+                  );
+                }}
+              </Droppable>
             </div>
           );
         })}
