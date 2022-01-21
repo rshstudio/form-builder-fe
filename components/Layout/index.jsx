@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { useLayout } from "@context/layout";
 
 const user = {
   name: "Tom Cook",
@@ -13,8 +14,8 @@ const user = {
 const navigation = [
   { name: "Dashboard", href: "/", current: true },
   { name: "Forms", href: "/forms", current: false },
-  { name: "Screens", href: "/", current: false },
-  { name: "Reports", href: "#", current: false },
+  { name: "Screens", href: "/screens", current: false },
+  { name: "Reports", href: "/reports", current: false },
 ];
 const userNavigation = [
   { name: "Your Profile", href: "#" },
@@ -27,6 +28,8 @@ function classNames(...classes) {
 }
 
 function Layout({ children }) {
+  const { pageTitle } = useLayout();
+
   return (
     <div className="min-h-full">
       <Disclosure as="nav" className="bg-gray-800">
@@ -193,7 +196,7 @@ function Layout({ children }) {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <h1 className="text-lg leading-6 font-semibold text-gray-900">
-            Dashboard
+            {pageTitle}
           </h1>
         </div>
       </header>
