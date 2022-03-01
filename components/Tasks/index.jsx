@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import classNames from "classnames";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import {
@@ -9,11 +8,19 @@ import {
 } from "@heroicons/react/solid";
 
 const tasks = [
-  { id: "1", content: "First task" },
-  { id: "2", content: "Second task" },
-  { id: "3", content: "Third task" },
-  { id: "4", content: "Fourth task" },
-  { id: "5", content: "Fifth task" },
+  {
+    id: "1",
+    title: "Name",
+    type: "Text",
+    options: {
+      validation: {},
+      placeholder: "Enter your task here",
+    },
+  },
+  { id: "2", title: "VAT", type: "Select" },
+  { id: "3", title: "Country", type: "Multi-select" },
+  { id: "4", title: "Supplier", type: "Dropdown" },
+  { id: "5", title: "Barcode", type: "Number" },
 ];
 
 const taskStatus = {
@@ -67,10 +74,10 @@ const onDragEnd = (result, columns, setColumns) => {
 function Tasks(props) {
   const [columns, setColumns] = React.useState(taskStatus);
 
-  const ListItem = ({ innerRef, isDragging, children, ...props }) => {
-    console.log("isDragging", isDragging);
+  const ListItem = ({ type, innerRef, isDragging, children, ...props }) => {
+    console.log("children", children);
     return (
-      <li ref={innerRef} {...props} className="mb-4 min-h-8 select-none">
+      <li ref={innerRef} {...props} className="mb-4 select-none min-h-8">
         <a
           href="#"
           className={classNames(
@@ -83,9 +90,9 @@ function Tasks(props) {
               <p className="text-sm font-medium text-indigo-600 truncate">
                 {children}
               </p>
-              <div className="ml-2 flex-shrink-0 flex">
-                <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  position_title
+              <div className="flex flex-shrink-0 ml-2">
+                <p className="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">
+                  {type}
                 </p>
               </div>
             </div>
@@ -98,7 +105,7 @@ function Tasks(props) {
                   />
                   position.department
                 </p>
-                <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
+                <p className="flex items-center mt-2 text-sm text-gray-500 sm:mt-0 sm:ml-6">
                   <LocationMarkerIcon
                     className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                     aria-hidden="true"
@@ -106,7 +113,7 @@ function Tasks(props) {
                   position.location
                 </p>
               </div>
-              <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+              <div className="flex items-center mt-2 text-sm text-gray-500 sm:mt-0">
                 <CalendarIcon
                   className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
                   aria-hidden="true"
@@ -124,7 +131,7 @@ function Tasks(props) {
   };
 
   return (
-    <div className="flex relative space-y-4 xl:space-y-0 xl:space-x-4">
+    <div className="relative flex space-y-4 xl:space-y-0 xl:space-x-4">
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
       >
@@ -158,7 +165,6 @@ function Tasks(props) {
                             index={index}
                           >
                             {(provided, snapshot) => {
-                              console.log("provided: ", provided);
                               return (
                                 <ListItem
                                   innerRef={provided.innerRef}
@@ -168,8 +174,9 @@ function Tasks(props) {
                                   style={{
                                     ...provided.draggableProps.style,
                                   }}
+                                  type={item?.type}
                                 >
-                                  {item.content}
+                                  {item.title}
                                 </ListItem>
                               );
                             }}
