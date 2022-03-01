@@ -3,6 +3,7 @@ import { useLayout } from "@context/layout";
 
 export default function Forms() {
   const { setPageTitle } = useLayout();
+  const unusedVar = null;
 
   React.useEffect(() => {
     setPageTitle("Forms");
